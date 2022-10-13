@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu, macos]
-        python-version: [ '3.7', '3.8', '3.9', '3.10']
+        python-version: ['3.8']
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -39,6 +39,10 @@ jobs:
         playwright install
         pip install .[test]
 
-    - name: Run Tests
+    - name: Run Test A
       run: |
-        pytest -sv nbclassic/tests/end_to_end
+        pytest -sv nbclassic/tests/end_to_end/test_save_as_notebook.py
+
+    - name: Run Test B
+      run: |
+        pytest -sv nbclassic/tests/end_to_end/test_move_multiselection.py
