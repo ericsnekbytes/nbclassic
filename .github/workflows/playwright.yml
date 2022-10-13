@@ -46,3 +46,11 @@ jobs:
     - name: Run Test B
       run: |
         pytest -sv nbclassic/tests/end_to_end/test_move_multiselection.py
+
+    - name: Run Test C
+      run: |
+        pytest -sv nbclassic/tests/end_to_end/test_dashboard_nav.py
+
+    - name: Run Test D
+          run: |
+            pytest -sv nbclassic/tests/end_to_end/test_save_readonly_as.py
