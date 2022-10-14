@@ -34,7 +34,7 @@ jobs:
 
     - name: Install Python dependencies
       run: |
-        pip -m install pytest-playwright
+        python -m pip install pytest-playwright
         playwright install
 
     - name: Run Tests
