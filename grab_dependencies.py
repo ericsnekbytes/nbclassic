@@ -7,7 +7,7 @@ def run():
 
     match = re.search(
         ("""([^\[]+)              # Grab everything before first bracket
-         (?:[^\[]+\[(?!t)[^\[]+)* # Match and Ignore non [test] sections
+         (?:[^\[]*\[(?!t)[^\[]+)* # Match and Ignore non [test] sections
          \[test\]                 # Match and ignore the test header
          ([^\[]+)                 # Match everythin inside the test section"""),
         text,
