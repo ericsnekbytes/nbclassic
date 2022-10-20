@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos]
+        os: [ubuntu]
         python-version: [ '3.7', '3.8', '3.9', '3.10']
     steps:
     - name: Checkout
@@ -39,3 +39,22 @@ jobs:
     - name: Run Individual Tests
       run: |
         pytest -sv nbclassic/tests/end_to_end
+        echo "@@@@@@@@ RUN 1 @@@@@@@@@@"
+        pytest -sv nbclassic/tests/end_to_end
+        echo "@@@@@@@@ RUN 2 @@@@@@@@@@"
+        pytest -sv nbclassic/tests/end_to_end
+        echo "@@@@@@@@ RUN 3 @@@@@@@@@@"
+        pytest -sv nbclassic/tests/end_to_end
+        echo "@@@@@@@@ RUN 4 @@@@@@@@@@"
+        pytest -sv nbclassic/tests/end_to_end
+        echo "@@@@@@@@ RUN 5 @@@@@@@@@@"
+        pytest -sv nbclassic/tests/end_to_end
+        echo "@@@@@@@@ RUN 6 @@@@@@@@@@"
+        pytest -sv nbclassic/tests/end_to_end
+        echo "@@@@@@@@ RUN 7 @@@@@@@@@@"
+        pytest -sv nbclassic/tests/end_to_end
+        echo "@@@@@@@@ RUN 8 @@@@@@@@@@"
+        pytest -sv nbclassic/tests/end_to_end
+        echo "@@@@@@@@ RUN 9 @@@@@@@@@@"
+        pytest -sv nbclassic/tests/end_to_end
+        echo "@@@@@@@@ RUN 10 @@@@@@@@@@"
