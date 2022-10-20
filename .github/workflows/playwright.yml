@@ -36,14 +36,6 @@ jobs:
       run: |
         python tools/install_pydeps.py
 
-    - name: X
-      run: |
-        which pytest
-
-    - name: Y
-      run: |
-        stat nbclassic/tests/end_to_end
-
     - name: Run Suite X Times
       run: |
-        python tools/runsuite_repeat.py
+        pytest nbclassic/tests/end_to_end

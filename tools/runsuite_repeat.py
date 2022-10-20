@@ -8,7 +8,6 @@ import time
 
 def run():
     for stepnum in range(10):
-        print(f'[RUNSUITE_REPEAT] {os.getcwd()} :: {[os.path.exists("nbclassic"), os.path.exists("nbclassic/tests"), os.path.exists("nbclassic/tests/end_to_end"), os.path.exists("tools/runsuite_repeat.py")]}')
         try:
             print(f'\n\n{os.listdir(".")}\n\n')
             proc = subprocess.run(['pytest', '-sv', 'nbclassic/tests/end_to_end'])
