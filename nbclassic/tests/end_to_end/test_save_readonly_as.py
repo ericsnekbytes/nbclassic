@@ -34,8 +34,13 @@ def test_save_readonly_as(notebook_frontend):
     notebook_frontend.wait_for_selector('//input[@data-testid="save-as"]', page=EDITOR_PAGE)
 
     # TODO: Add a function for locator assertions to FrontendElement
-    locator_element = notebook_frontend.locate_and_focus('//input[@data-testid="save-as"]', page=EDITOR_PAGE)
-    locator_element.wait_for('visible')
+    locator_element = notebook_frontend.locate('//input[@data-testid="save-as"]', page=EDITOR_PAGE)
+    locator_element.focus()
+    notebook_frontend.wait_for_condition(
+        lambda: locator_element.is_visible(),
+        timeout=120,
+        period=5
+    )
 
     modal_footer = notebook_frontend.locate('.modal-footer', page=EDITOR_PAGE)
     modal_footer.wait_for('visible')
