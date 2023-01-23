@@ -46,14 +46,20 @@ def test_save_readonly_as(notebook_frontend):
     name_input_element.click()
     print('::::NAME1')
     print(name_input_element.evaluate(f'(elem) => {{ return elem.value; }}'))
+    print('::::NB1')
+    print(get_notebook_name(notebook_frontend))
     name_input_element.evaluate(f'(elem) => {{ elem.value = "new_notebook.ipynb"; return elem.value; }}')
     print('::::NAME2')
     print(name_input_element.evaluate(f'(elem) => {{ return elem.value; }}'))
+    print('::::NB2')
+    print(get_notebook_name(notebook_frontend))
     # notebook_frontend.insert_text('new_notebook.ipynb', page=EDITOR_PAGE)
 
     save_element.wait_for('visible')
     save_element.focus()
     save_element.click()
+    print('::::NB3')
+    print(get_notebook_name(notebook_frontend))
 
     notebook_frontend.wait_for_condition(
         lambda: get_notebook_name(notebook_frontend) == "new_notebook.ipynb", timeout=120, period=5
