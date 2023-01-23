@@ -64,6 +64,8 @@ def test_save_readonly_as(notebook_frontend):
     notebook_frontend.wait_for_condition(
         lambda: get_notebook_name(notebook_frontend) == "new_notebook.ipynb", timeout=120, period=5
     )
+    print('::::NB4')
+    print(get_notebook_name(notebook_frontend))
 
     # notebook_frontend.locate('#notebook_name', page=EDITOR_PAGE)
 
