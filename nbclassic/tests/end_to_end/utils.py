@@ -393,6 +393,17 @@ class NotebookFrontend:
     def _pause(self):
         self._editor_page.pause()
 
+    def reload(self, page):
+        """Find an element matching selector on the given page"""
+        if page == TREE_PAGE:
+            specified_page = self._tree_page
+        elif page == EDITOR_PAGE:
+            specified_page = self._editor_page
+        else:
+            raise Exception('Error, provide a valid page to locate from!')
+
+        specified_page.reload()
+
     def locate(self, selector, page):
         """Find an element matching selector on the given page"""
         if page == TREE_PAGE:
