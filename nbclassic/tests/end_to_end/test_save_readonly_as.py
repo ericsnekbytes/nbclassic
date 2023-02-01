@@ -68,6 +68,11 @@ def test_save_readonly_as(notebook_frontend):
     name_input_element.focus()
     name_input_element.click()
 
+    # Make sure the save prompt is visible
+    if not name_input_element.is_visible():
+        save_as(notebook_frontend)
+        name_input_element.wait_for('visible')
+
     # Input a new name/path
     notebook_name = 'writable_notebook.ipynb'
     notebook_frontend.wait_for_condition(
