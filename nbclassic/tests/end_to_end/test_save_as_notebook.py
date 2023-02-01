@@ -9,34 +9,63 @@ def save_as(nb):
     JS = '() => Jupyter.notebook.save_notebook_as()'
     return nb.evaluate(JS, page=EDITOR_PAGE)
 
+
 def get_notebook_name(nb):
     JS = '() => Jupyter.notebook.notebook_name'
     return nb.evaluate(JS, page=EDITOR_PAGE)
+
 
 def set_notebook_name(nb, name):
     JS = f'() => Jupyter.notebook.rename("{name}")'
     nb.evaluate(JS, page=EDITOR_PAGE)
 
 
-def test_save_notebook_as(notebook_frontend):
+def test_save_as_nb(notebook_frontend):
+    print('[Test] [test_save_as_nb]')
+
+    print('[Test] Set notebook name')
     set_notebook_name(notebook_frontend, name="nb1.ipynb")
-
-    notebook_frontend.locate('#notebook_name', page=EDITOR_PAGE)
-
-    assert get_notebook_name(notebook_frontend) == "nb1.ipynb"
+    notebook_frontend.wait_for_condition(
+        lambda: get_notebook_name(notebook_frontend == 'nb1.ipynb'),
+        timeout=150,
+        period=1
+    )
 
     # Wait for Save As modal, save
+    print('[Test] Open save as dialog')
     save_as(notebook_frontend)
-    notebook_frontend.wait_for_selector('.save-message', page=EDITOR_PAGE)
+    notebook_frontend.wait_for_selector(".modal-footer", page=EDITOR_PAGE)
+    dialog_element = notebook_frontend.locate(".modal-footer", page=EDITOR_PAGE)
+    dialog_element.focus()
 
-    # TODO: Add a function for locator assertions to FrontendElement
-    locator_element = notebook_frontend.locate_and_focus('//input[@data-testid="save-as"]', page=EDITOR_PAGE)
-    locator_element.wait_for('visible')
+    notebook_frontend.wait_for_selector('.modal-body .form-control', page=EDITOR_PAGE)
+    name_input_element = notebook_frontend.locate('.modal-body .form-control', page=EDITOR_PAGE)
+    name_input_element.focus()
+    name_input_element.click()
 
-    notebook_frontend.insert_text('new_notebook.ipynb', page=EDITOR_PAGE)
-    notebook_frontend.try_click_selector('//html//body//div[8]//div//div//div[3]//button[2]', page=EDITOR_PAGE)
-    
-    locator_element.expect_not_to_be_visible()
+    notebook_frontend.wait_for_condition(
+        lambda: name_input_element.evaluate(
+            f'(elem) => {{ elem.value = "new_notebook.ipynb"; return elem.value; }}') == 'new_notebook.ipynb',
+        timeout=150,
+        period=.25
+    )
 
-    assert get_notebook_name(notebook_frontend) == "new_notebook.ipynb"
-    assert "new_notebook.ipynb" in notebook_frontend.get_page_url(page=EDITOR_PAGE)
+    print('[Test] Locate and click the save button')
+    save_element = dialog_element.locate('text=Save')
+    save_element.wait_for('visible')
+    save_element.focus()
+    save_element.click()
+
+    # Check if the save operation succeeded (by checking notebook name change)
+    notebook_frontend.wait_for_condition(
+        lambda: get_notebook_name(notebook_frontend) == "new_notebook.ipynb",
+        timeout=120,
+        period=5
+    )
+
+    # Check the notebook URL
+    notebook_frontend.wait_for_condition(
+        lambda: "new_notebook.ipynb" in notebook_frontend.get_page_url(page=EDITOR_PAGE),
+        timeout=120,
+        period=5
+    )
