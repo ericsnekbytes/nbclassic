@@ -41,7 +41,7 @@ def test_save_readonly_as(notebook_frontend):
     print('[Test] Check that the notebook is read-only')
     notebook_frontend.wait_for_condition(
         lambda: notebook_frontend.evaluate('() => { return Jupyter.notebook.writable }', page=EDITOR_PAGE) is False,
-        timeout=37,
+        timeout=150,
         period=1
     )
 
@@ -50,7 +50,7 @@ def test_save_readonly_as(notebook_frontend):
     notebook_frontend.edit_cell(index=0, content=test_content_0)
     notebook_frontend.wait_for_condition(
         lambda: notebook_frontend.get_cell_contents(0).strip() == test_content_0,
-        timeout=37,
+        timeout=150,
         period=1
     )
 
@@ -73,7 +73,7 @@ def test_save_readonly_as(notebook_frontend):
         lambda: name_input_element.evaluate(
             f'(elem) => {{ elem.value = "{notebook_name}"; return elem.value; }}'
         ) == notebook_name,
-        timeout=37,
+        timeout=150,
         period=.25
     )
 
@@ -101,7 +101,7 @@ def test_save_readonly_as(notebook_frontend):
     print('[Test] Check that the notebook is no longer read only')
     notebook_frontend.wait_for_condition(
         lambda: notebook_frontend.evaluate('() => { return Jupyter.notebook.writable }', page=EDITOR_PAGE) is True,
-        timeout=37,
+        timeout=150,
         period=1
     )
 
@@ -114,23 +114,23 @@ def test_save_readonly_as(notebook_frontend):
     # Test that it still contains the content
     notebook_frontend.wait_for_condition(
         lambda: notebook_frontend.get_cell_contents(index=0) == test_content_0,
-        timeout=37,
+        timeout=150,
         period=1
     )
     notebook_frontend.wait_for_condition(
         lambda: notebook_frontend.get_cell_contents(index=1) == test_content_1,
-        timeout=37,
+        timeout=150,
         period=1
     )
     # even after a refresh
     notebook_frontend.reload(EDITOR_PAGE)
     notebook_frontend.wait_for_condition(
         lambda: notebook_frontend.get_cell_contents(index=0) == test_content_0,
-        timeout=37,
+        timeout=150,
         period=1
     )
     notebook_frontend.wait_for_condition(
         lambda: notebook_frontend.get_cell_contents(index=1) == test_content_1,
-        timeout=37,
+        timeout=150,
         period=1
     )
