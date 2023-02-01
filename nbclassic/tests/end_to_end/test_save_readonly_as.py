@@ -82,6 +82,7 @@ def test_save_readonly_as(notebook_frontend):
     save_element.wait_for('visible')
     save_element.focus()
     save_element.click()
+    save_element.expect_not_to_be_visible(timeout=150)
 
     # Check if the save operation succeeded (by checking notebook name change)
     print('[Test] Check notebook name')
