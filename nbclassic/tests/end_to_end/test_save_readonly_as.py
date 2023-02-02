@@ -1,7 +1,7 @@
 """Test readonly notebook saved and renamed"""
 
 
-from .utils import EDITOR_PAGE
+from .utils import EDITOR_PAGE, TimeoutError as TestTimeout
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
 
@@ -74,6 +74,7 @@ def test_save_readonly_as(notebook_frontend):
         name_input_element.wait_for('visible')
 
     # Input a new name/path
+    print('/IMG/X0/' + notebook_frontend._editor_page.screenshot().hex() + '/IMG/')
     notebook_name = 'writable_notebook.ipynb'
     notebook_frontend.wait_for_condition(
         lambda: name_input_element.evaluate(
@@ -81,17 +82,19 @@ def test_save_readonly_as(notebook_frontend):
         timeout=150,
         period=.25
     )
+    print('/IMG/X1/' + notebook_frontend._editor_page.screenshot().hex() + '/IMG/')
 
     print('[Test] Locate and click the save button')
     save_element = dialog_element.locate('text=Save')
     save_element.wait_for('visible')
     save_element.focus()
     save_element.click()
+    print('/IMG/X1/' + notebook_frontend._editor_page.screenshot().hex() + '/IMG/')
     if save_element.is_visible():
         print('[Test] Save element still visible after save, wait for hidden')
         try:
             save_element.expect_not_to_be_visible(timeout=120)
-        except PlaywrightTimeoutError as err:
+        except TestTimeout as err:
             print('[Test]   Save button failed to hide...')
 
     # Check if the save operation succeeded (by checking notebook name change)

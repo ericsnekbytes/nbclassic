@@ -179,6 +179,8 @@ class FrontendElement:
             expect(self._element).not_to_be_visible(timeout=timeout * seconds_to_milliseconds)
         except ValueError as err:
             raise Exception('Cannot expect not_to_be_visible on this type!') from err
+        except AssertionError as err:
+            raise TimeoutError('Error waiting not_to_be_visible!') from err
 
     def expect_to_have_text(self, text):
         try:
