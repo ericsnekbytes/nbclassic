@@ -33,7 +33,7 @@ BROWSER_OBJ = 'BROWSER_OBJ'
 CELL_OUTPUT_SELECTOR = '.output_subarea'
 
 
-class TimeoutError(Exception):
+class EndToEndTimeout(Exception):
 
     def get_result(self):
         return None if not self.args else self.args[0]
@@ -180,7 +180,7 @@ class FrontendElement:
         except ValueError as err:
             raise Exception('Cannot expect not_to_be_visible on this type!') from err
         except AssertionError as err:
-            raise TimeoutError('Error waiting not_to_be_visible!') from err
+            raise EndToEndTimeout('Error waiting not_to_be_visible!') from err
 
     def expect_to_have_text(self, text):
         try:
@@ -675,7 +675,7 @@ class NotebookFrontend:
                 traceback.print_exc()
                 print('\n[NotebookFrontend] Ignoring exception in wait_for_condition, read more above')
         else:
-            raise TimeoutError()
+            raise EndToEndTimeout()
 
     def wait_for_cell_output(self, index=0, timeout=30):
         """Waits for the cell to finish executing and return the cell output"""
