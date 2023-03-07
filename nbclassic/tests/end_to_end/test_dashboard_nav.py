@@ -63,6 +63,8 @@ def test_navigation(notebook_frontend):
                 period=5
             )
             print(f'[Test]     Check URL 2')
+            print(f'[Test]       Item link: "{item["link"]}"')
+            print(f'[Test]       Page URL start: "{nb.get_page_url(page=TREE_PAGE)}"')
             notebook_frontend.wait_for_condition(
                 lambda: item["link"] in nb.get_page_url(page=TREE_PAGE),
                 timeout=300,
