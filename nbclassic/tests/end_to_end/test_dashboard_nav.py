@@ -56,16 +56,19 @@ def test_navigation(notebook_frontend):
             print(f'[Test]   Navigate/click item link')
             item["element"].click()
 
+            print(f'[Test]     Check URL 1')
             notebook_frontend.wait_for_condition(
                 lambda: url_in_tree(notebook_frontend),
                 timeout=300,
                 period=5
             )
+            print(f'[Test]     Check URL 2')
             notebook_frontend.wait_for_condition(
                 lambda: item["link"] in nb.get_page_url(page=TREE_PAGE),
                 timeout=300,
                 period=5
             )
+            print(f'[Test]     Passed!')
 
             new_links = get_list_items(nb)
             if len(new_links) > 0:
