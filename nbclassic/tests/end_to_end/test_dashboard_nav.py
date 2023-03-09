@@ -1,6 +1,5 @@
 """Test navigation to directory links"""
-
-
+import datetime
 import os
 
 from .utils import TREE_PAGE
@@ -22,7 +21,6 @@ def get_list_items(nb):
     """
 
     nb.wait_for_selector('#notebook_list .item_link', page=TREE_PAGE)
-    # notebook_list = nb.locate('#notebook_list', page=TREE_PAGE)
     link_items = nb.locate_all('#notebook_list .item_link', page=TREE_PAGE)
 
     return [{
@@ -33,7 +31,7 @@ def get_list_items(nb):
 
 
 def test_navigation(notebook_frontend):
-    print('[Test] [test_dashboard_nav] Start!')
+    print('[Test] [test_dashboard_nav] Start! y1')
 
     print('[Test] Obtain list of elements')
     link_elements = get_list_items(notebook_frontend)
@@ -41,6 +39,7 @@ def test_navigation(notebook_frontend):
     # Recursively traverse and check folder in the Jupyter root dir
     def check_links(nb, list_of_link_elements):
         print('[Test] Check links')
+        print(f'[Test]   Time {datetime.datetime.now()}')
         if len(list_of_link_elements) < 1:
             return
 
@@ -56,13 +55,13 @@ def test_navigation(notebook_frontend):
             print(f'[Test]   Navigate/click item link')
             item["element"].click()
 
-            print(f'[Test]     Check URL 1')
+            print(f'[Test]     Check URL in tree')
             notebook_frontend.wait_for_condition(
                 lambda: url_in_tree(notebook_frontend),
                 timeout=300,
                 period=5
             )
-            print(f'[Test]     Check URL 2')
+            print(f'[Test]     Check URL matches link')
             print(f'[Test]       Item link: "{item["link"]}"')
             print(f'[Test]       Page URL start: "{nb.get_page_url(page=TREE_PAGE)}"')
             notebook_frontend.wait_for_condition(
@@ -72,8 +71,13 @@ def test_navigation(notebook_frontend):
             )
             print(f'[Test]     Passed!')
 
+            print('[Test]     Obtain list items')
+            print(f'[Test]       Page URL is {nb.get_page_url(page=TREE_PAGE)}')
+            print(f'[Test]       Item label is {item["label"]}')
+            print(f'[Test]       Item link is {item["link"]}')
             new_links = get_list_items(nb)
             if len(new_links) > 0:
+                print(f'[Test]     Found ({len(new_links)}) new links')
                 check_links(nb, new_links)
 
             print(f'[Test]   Go back to parent dir and wait for URL')
