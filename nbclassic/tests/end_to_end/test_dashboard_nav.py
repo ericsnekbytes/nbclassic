@@ -71,35 +71,47 @@ def test_navigation(notebook_frontend):
                 # Skip notebook files in the temp dir
                 continue
 
-            print(f'[Test]   Navigate/click item link')
-            item["element"].click()
+            tries = 0
+            def attempt_navigate():
+                nonlocal tries
+                tries += 1
+                print(f'[Test]   Attempt #{tries} navigate/click item link')
+                item["element"].click()
 
-            # Wait for tree entry for this folder item to disappear,
-            # signalling that the tree page links have changed (should
-            # account for lag when clicking the link item, before the
-            # new list of subdirs/files have been populated)...(we don't
-            # have same-name folders in different subdirs for this
-            # test so this approach is valid)
-            print(f'[Test]   Wait for current item link to disappear from the list')
+                # Wait for tree entry for this folder item to disappear,
+                # signalling that the tree page links have changed (should
+                # account for lag when clicking the link item, before the
+                # new list of subdirs/files have been populated)...(we don't
+                # have same-name folders in different subdirs for this
+                # test so this approach is valid)
+                print(f'[Test]   Wait for current item link to disappear from the list')
+                notebook_frontend.wait_for_condition(
+                    lambda: not notebook_frontend.locate(
+                        f'#notebook_list .item_link >> text="{item["label"]}"',
+                        page=EDITOR_PAGE).is_visible()
+                )
+
+                print(f'[Test]     Check URL in tree')
+                nb.wait_for_condition(
+                    lambda: url_in_tree(notebook_frontend),
+                    timeout=60,
+                    period=5
+                )
+                print(f'[Test]     Check URL matches link')
+                print(f'[Test]       Item link: "{item["link"]}"')
+                print(f'[Test]       Current URL is: "{nb.get_page_url(page=TREE_PAGE)}"')
+                nb.wait_for_condition(
+                    lambda: item["link"] in nb.get_page_url(page=TREE_PAGE),
+                    timeout=60,
+                    period=5
+                )
+                print(f'[Test]     Passed!')
+                return True
             notebook_frontend.wait_for_condition(
-                lambda: not notebook_frontend.locate(f'#notebook_list .item_link >> text="{item["label"]}"', page=EDITOR_PAGE).is_visible()
+                lambda: attempt_navigate(),
+                timeout=360,
+                period=1
             )
-
-            print(f'[Test]     Check URL in tree')
-            nb.wait_for_condition(
-                lambda: url_in_tree(notebook_frontend),
-                timeout=300,
-                period=5
-            )
-            print(f'[Test]     Check URL matches link')
-            print(f'[Test]       Item link: "{item["link"]}"')
-            print(f'[Test]       Current URL is: "{nb.get_page_url(page=TREE_PAGE)}"')
-            nb.wait_for_condition(
-                lambda: item["link"] in nb.get_page_url(page=TREE_PAGE),
-                timeout=300,
-                period=5
-            )
-            print(f'[Test]     Passed!')
 
             print('[Test]     Obtain list items')
             print(f'[Test]       Page URL is {nb.get_page_url(page=TREE_PAGE)}')
