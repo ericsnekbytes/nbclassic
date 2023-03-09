@@ -28,7 +28,7 @@ def get_list_items(nb):
         print(f'             Found link item:')
         print(f'                 {item._bool}')
         print(f'                 {item._element}')
-        if item:
+        if item and item.is_visible():
             inner_text = item.get_inner_text()
             print(f'                 text: "{inner_text}"')
             if inner_text != '..':
