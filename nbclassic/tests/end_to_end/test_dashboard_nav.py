@@ -22,6 +22,10 @@ def get_list_items(nb):
 
     nb.wait_for_selector('#notebook_list .item_link', page=TREE_PAGE)
     link_items = nb.locate_all('#notebook_list .item_link', page=TREE_PAGE)
+    for item in link_items:
+        print(f'         Link item')
+        print(f'           {item._bool}')
+        print(f'           {item._element}')
 
     return [{
         'link': a.get_attribute('href'),
