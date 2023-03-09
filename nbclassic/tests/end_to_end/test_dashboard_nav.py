@@ -2,7 +2,7 @@
 import datetime
 import os
 
-from .utils import TREE_PAGE
+from .utils import TREE_PAGE, EDITOR_PAGE
 from jupyter_server.utils import url_path_join
 pjoin = os.path.join
 
@@ -73,6 +73,17 @@ def test_navigation(notebook_frontend):
 
             print(f'[Test]   Navigate/click item link')
             item["element"].click()
+
+            # Wait for tree entry for this folder item to disappear,
+            # signalling that the tree page links have changed (should
+            # account for lag when clicking the link item, before the
+            # new list of subdirs/files have been populated)...(we don't
+            # have same-name folders in different subdirs for this
+            # test so this approach is valid)
+            print(f'[Test]   Wait for current item link to disappear from the list')
+            notebook_frontend.wait_for_condition(
+                lambda: not notebook_frontend.locate(f'#notebook_list .item_link >> text="{item["label"]}"', page=EDITOR_PAGE).is_visible()
+            )
 
             print(f'[Test]     Check URL in tree')
             nb.wait_for_condition(
