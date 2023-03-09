@@ -23,9 +23,9 @@ def get_list_items(nb):
     nb.wait_for_selector('#notebook_list .item_link', page=TREE_PAGE)
     link_items = nb.locate_all('#notebook_list .item_link', page=TREE_PAGE)
     for item in link_items:
-        print(f'         Link item')
-        print(f'           {item._bool}')
-        print(f'           {item._element}')
+        print(f'             Link item')
+        print(f'                 {item._bool}')
+        print(f'                 {item._element}')
 
     return [{
         'link': a.get_attribute('href'),
@@ -50,7 +50,7 @@ def test_navigation(notebook_frontend):
         starting_parent_url = nb.get_page_url(page=TREE_PAGE)
         print(f'[Test]   Start URL at: "{starting_parent_url}"')
         for item in list_of_link_elements:
-            print(f'[Test]   Check "{item["label"]}"')
+            print(f'[Test]   List item is "{item["label"]}"')
             if '.ipynb' in item["label"]:
                 print(f'[Test]     Skipping non-dir notebook file')
                 # Skip notebook files in the temp dir
@@ -60,15 +60,15 @@ def test_navigation(notebook_frontend):
             item["element"].click()
 
             print(f'[Test]     Check URL in tree')
-            notebook_frontend.wait_for_condition(
+            nb.wait_for_condition(
                 lambda: url_in_tree(notebook_frontend),
                 timeout=300,
                 period=5
             )
             print(f'[Test]     Check URL matches link')
             print(f'[Test]       Item link: "{item["link"]}"')
-            print(f'[Test]       Page URL start: "{nb.get_page_url(page=TREE_PAGE)}"')
-            notebook_frontend.wait_for_condition(
+            print(f'[Test]       Current URL is: "{nb.get_page_url(page=TREE_PAGE)}"')
+            nb.wait_for_condition(
                 lambda: item["link"] in nb.get_page_url(page=TREE_PAGE),
                 timeout=300,
                 period=5
