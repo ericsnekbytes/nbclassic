@@ -22,20 +22,31 @@ def get_list_items(nb):
 
     nb.wait_for_selector('#notebook_list .item_link', page=TREE_PAGE)
     link_items = nb.locate_all('#notebook_list .item_link', page=TREE_PAGE)
+
+    results = []
     for item in link_items:
         print(f'             Found link item:')
         print(f'                 {item._bool}')
         print(f'                 {item._element}')
         if item:
-            print(f'                 text: "{item.get_inner_text()}"')
+            inner_text = item.get_inner_text()
+            print(f'                 text: "{inner_text}"')
+            if inner_text != '..':
+                print(f'                 adding link to results')
+                results.append({
+                    'link': item.get_attribute('href'),
+                    'label': inner_text,
+                    'element': item,
+                })
         else:
             print(f'                 invalid element!')
 
-    return [{
-        'link': a.get_attribute('href'),
-        'label': a.get_inner_text(),
-        'element': a,
-    } for a in link_items if a and a.get_inner_text() != '..']
+    return results
+    # return [{
+    #     'link': a.get_attribute('href'),
+    #     'label': a.get_inner_text(),
+    #     'element': a,
+    # } for a in link_items if a and a.get_inner_text() != '..']
 
 
 def test_navigation(notebook_frontend):
