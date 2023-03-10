@@ -60,7 +60,7 @@ def test_navigation(notebook_frontend):
     SUBDIR1B = 'sub ∂ir1b'
 
     start_url = notebook_frontend.get_page_url(page=TREE_PAGE)
-    links = notebook_frontend.locate_all('#notebook_list .item_link')
+    links = notebook_frontend.locate_all('#notebook_list .item_link', TREE_PAGE)
     target_element = [item for item in links if item.get_inner_text().strip() == SUBDIR1][0]
     target_link = target_element.get_attribute("href")
     target_element.click()
@@ -76,7 +76,7 @@ def test_navigation(notebook_frontend):
         period=5
     )
     print(f'[Test]     Check URL matches link')
-    print(f'[Test]       Item link: "{}"')
+    print(f'[Test]       Item link: "{target_link}"')
     print(f'[Test]       Current URL is: "{notebook_frontend.get_page_url(page=TREE_PAGE)}"')
     notebook_frontend.wait_for_condition(
         lambda: target_link in notebook_frontend.get_page_url(page=TREE_PAGE),
