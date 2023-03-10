@@ -1,5 +1,6 @@
 """Test navigation to directory links"""
-import datetime
+
+
 import os
 
 from .utils import TREE_PAGE, EDITOR_PAGE
@@ -8,6 +9,7 @@ pjoin = os.path.join
 
 
 def url_in_tree(nb, url=None):
+    """Ensure we're in the tree page somewhere (the file browser page)"""
     if url is None:
         url = nb.get_page_url(page=TREE_PAGE)
 
@@ -65,8 +67,6 @@ def test_navigation(notebook_frontend):
     # the server setup fixture (dirs/names are created there)
     # TODO: Refactor to define those dirs/names here
 
-    # os.makedirs(pjoin(nbdir, 'sub ∂ir1', 'sub ∂ir 1a'))
-    # os.makedirs(pjoin(nbdir, 'sub ∂ir2', 'sub ∂ir 1b'))
     SUBDIR1 = 'sub ∂ir1'
     SUBDIR2 = 'sub ∂ir2'
     SUBDIR1A = 'sub ∂ir 1a'
@@ -77,12 +77,12 @@ def test_navigation(notebook_frontend):
     tree_url = notebook_frontend.get_page_url(page=TREE_PAGE)
     print(f'[Test]   URL is now at "{tree_url}"')
 
-    # Test navigation to first folder in root
+    # Test navigation to first folder from root
     print(f'[Test] Navigate to subdir1')
     subdir1_url = navigate_to_link(notebook_frontend, SUBDIR1)
     print(f'[Test]   URL is now at "{subdir1_url}"')
 
-    # Test navigation to first subfolder
+    # Test navigation to first subfolder (1a)
     print(f'[Test] Navigate to subdir1a')
     subdir1a_url = navigate_to_link(notebook_frontend, SUBDIR1A)
     print(f'[Test]   URL is now at "{subdir1a_url}"')
@@ -98,6 +98,7 @@ def test_navigation(notebook_frontend):
         timeout=300,
         period=5
     )
+    # Wait for the links to update (subdir1a link should NOT be showing anymore)
     notebook_frontend.wait_for_condition(
         lambda: not notebook_frontend.locate(
             f'#notebook_list .item_link >> text="{SUBDIR1A}"',
@@ -108,13 +109,14 @@ def test_navigation(notebook_frontend):
     print(f'[Test] Navigate to subdir2')
     subdir2_url = navigate_to_link(notebook_frontend, SUBDIR2)
     print(f'[Test]   URL is now at "{subdir2_url}"')
+    # Wait for the links to update (subdir2 link should NOT be showing anymore)
     notebook_frontend.wait_for_condition(
         lambda: not notebook_frontend.locate(
             f'#notebook_list .item_link >> text="{SUBDIR2}"',
             page=EDITOR_PAGE).is_visible()
     )
 
-    # Test navigation to second subfolder
+    # Test navigation to second subfolder (1b)
     print(f'[Test] Navigate to subdir1b')
     subdir1b_url = navigate_to_link(notebook_frontend, SUBDIR1B)
     print(f'[Test]   URL is now at "{subdir1b_url}"')
@@ -132,83 +134,3 @@ def test_navigation(notebook_frontend):
     )
 
     print('[Test] [test_dashboard_nav] Finished!')
-
-    # # Recursively traverse and check folder in the Jupyter root dir
-    # def check_links(nb, list_of_link_elements):
-    #     print('[Test] Check links')
-    #     print(f'[Test]   Time {datetime.datetime.now()}')
-    #     if len(list_of_link_elements) < 1:
-    #         return
-    #
-    #     starting_parent_url = nb.get_page_url(page=TREE_PAGE)
-    #     print(f'[Test]   Start URL at: "{starting_parent_url}"')
-    #     for item in list_of_link_elements:
-    #         print(f'[Test]   List item is "{item["label"]}"')
-    #         if '.ipynb' in item["label"]:
-    #             print(f'[Test]     Skipping non-dir notebook file')
-    #             # Skip notebook files in the temp dir
-    #             continue
-    #
-    #         tries = 0
-    #         def attempt_navigate():
-    #             nonlocal tries
-    #             tries += 1
-    #             print(f'[Test]   Attempt #{tries} navigate/click item link')
-    #             item["element"].click()
-    #
-    #             # Wait for tree entry for this folder item to disappear,
-    #             # signalling that the tree page links have changed (should
-    #             # account for lag when clicking the link item, before the
-    #             # new list of subdirs/files have been populated)...(we don't
-    #             # have same-name folders in different subdirs for this
-    #             # test so this approach is valid)
-    #             print(f'[Test]   Wait for current item link to disappear from the list')
-    #             notebook_frontend.wait_for_condition(
-    #                 lambda: not notebook_frontend.locate(
-    #                     f'#notebook_list .item_link >> text="{item["label"]}"',
-    #                     page=EDITOR_PAGE).is_visible()
-    #             )
-    #
-    #             print(f'[Test]     Check URL in tree')
-    #             nb.wait_for_condition(
-    #                 lambda: url_in_tree(notebook_frontend),
-    #                 timeout=60,
-    #                 period=5
-    #             )
-    #             print(f'[Test]     Check URL matches link')
-    #             print(f'[Test]       Item link: "{item["link"]}"')
-    #             print(f'[Test]       Current URL is: "{nb.get_page_url(page=TREE_PAGE)}"')
-    #             nb.wait_for_condition(
-    #                 lambda: item["link"] in nb.get_page_url(page=TREE_PAGE),
-    #                 timeout=60,
-    #                 period=5
-    #             )
-    #             print(f'[Test]     Passed!')
-    #             return True
-    #         notebook_frontend.wait_for_condition(
-    #             lambda: attempt_navigate(),
-    #             timeout=360,
-    #             period=1
-    #         )
-    #
-    #         print('[Test]     Obtain list items')
-    #         print(f'[Test]       Page URL is {nb.get_page_url(page=TREE_PAGE)}')
-    #         print(f'[Test]       Item label is {item["label"]}')
-    #         print(f'[Test]       Item link is {item["link"]}')
-    #         new_links = get_list_items(nb)
-    #         if len(new_links) > 0:
-    #             print(f'[Test]     Found ({len(new_links)}) new links')
-    #             check_links(nb, new_links)
-    #
-    #         print(f'[Test]   Go back to parent dir and wait for URL')
-    #         nb.go_back(page=TREE_PAGE)
-    #         nb.wait_for_condition(
-    #             lambda: nb.get_page_url(page=TREE_PAGE) == starting_parent_url,
-    #             timeout=300,
-    #             period=5
-    #         )
-    #
-    #     return
-    #
-    # check_links(notebook_frontend, link_elements)
-    # print('[Test] [test_dashboard_nav] Finished!')
