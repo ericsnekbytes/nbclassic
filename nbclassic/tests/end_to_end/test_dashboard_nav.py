@@ -16,17 +16,18 @@ def url_in_tree(nb, url=None):
 
 
 def navigate_to_link(nb, item_text):
+    print(f'[Test]   Now navigating to "{item_text}"')
     notebook_frontend = nb
 
-    print(f'[Test]   Now navigating to "{item_text}"')
+    # Define a match finder func (this is easier
+    # to hook into for debugging than a listcomp)
     def get_matches():
+        print(f'[Test]     Attempt to find matches...')
         tree_page_items = [item for item in notebook_frontend.locate_all('#notebook_list .item_link', TREE_PAGE)]
-        print(f'     Attempt to find matches...')
-        for elem in tree_page_items:
-            print(f'       {elem._element}')
-            if elem.is_visible():
-                print(f'         {elem.get_inner_text()}')
+        if tree_page_items:
+            print(f'[Test]       Found!')
         return [elem for elem in tree_page_items if elem.is_visible() and elem.get_inner_text().strip() == item_text]
+    # Get tree page item matching the item_text (the dir name/link element to navigate to)
     matches = notebook_frontend.wait_for_condition(
         lambda: get_matches(),
         period=3
@@ -60,7 +61,9 @@ def navigate_to_link(nb, item_text):
 def test_navigation(notebook_frontend):
     print('[Test] [test_dashboard_nav] Start! y2')
 
-    # NOTE the paths here are determined by X
+    # NOTE: The paths used here are currently define in
+    # the server setup fixture (dirs/names are created there)
+    # TODO: Refactor to define those dirs/names here
 
     # os.makedirs(pjoin(nbdir, 'sub ∂ir1', 'sub ∂ir 1a'))
     # os.makedirs(pjoin(nbdir, 'sub ∂ir2', 'sub ∂ir 1b'))
